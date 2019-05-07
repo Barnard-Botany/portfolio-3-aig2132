@@ -1,4 +1,5 @@
 ---
+author: Abigail I. Gutierrez 
 title: "R for Phylogenies: Introduction"
 output: html_notebook
 ---
@@ -38,7 +39,7 @@ It is also possible to download R Packages from GitHub repositories if you have 
 #install.packages(ape)
 #install.packages("devtools")
 #devtools::install_github("ropensci/brranching")
-library("ape")
+#library("ape")
 #library("brranching")
 ```
 
@@ -56,10 +57,11 @@ http://en.wikipedia.org/wiki/Newick_format
 ```{r}
 newick_str = "(((Humans, Chimps), Gorillas), Orangs);"
 #Here, we are defining a character variable. 
-tr_primates = read.tree(text=newick_str)
+tr_primates = read.tree(text=newick_str) 
 #Now, with the command "read.tree" from the Package APE, we are converting that simple character variable by reading it as a tree, also known as a phylo object. The function in APE is going to understand not only that there are four "tip taxa" but also that the structure of the parenthesis is meaningful as a hypothesis about their evolutionary relationship, and at the same time the information needed to connect them into a tree diagram with three nodes (which are ancestral taxa to these tip taxa). Before you run the code, think about what the phylogenetic tree should look like, basedo n what you know about these four taxa and about what you know about the code. 
 plot(tr_primates)
 #This last line simply plotted the object as a tree. More about this below. 
+
 ```
 
 You may remember that during Digital Lab 1 on February 1st, we used the function "plot" to make an X-Y plot. 
@@ -86,6 +88,8 @@ What is the difference between regular plot and the command below, if any?
 
 As an alternative to using the R Studio window at top right, instead write and submit a few commands such as
 
+After I pasted these few commands I got information about the tip labels, and what information is available from the tree that I just made. So the code tells me that in this tree I have the class of "phylo " and order given by "cladewise"
+
 tr_primates
 
 str("tr_primates")
@@ -97,6 +101,17 @@ str(tr_primates)
 attributes(tr_primates)
 
 names(tr_primates) 
+```{r}
+tr_primates
+
+str("tr_primates")
+
+str(tr_primates)
+
+attributes(tr_primates)
+
+names(tr_primates)  
+```
 
 Generate output, and then write brief notes about the information you are given by submitting these commands.  
 
@@ -139,10 +154,42 @@ plot(tr2_plants)
 ## MINI-EXERCISE 2
 
 1. Copy, paste and re-write a chunk of code (or write it fresh): write a new Newick tree as as string variable, read it as a tree, and plot it. Make sure it is consistent with 2018 botanical knowledge about these four taxa. You may need to modify topology.
+```{r}
+newick_str = "(Clubmosses,(Ferns,(Ginko, Daisy)));"
+tr2_plants = read.tree(text=newick_str)
+plot(tr2_plants)
+
+
+```
+
 
 2. To these four taxa, add two additional taxa: radish and sequoia. For these six tip taxa, write a new Newick variable, read it, and plot it. Then repeat. Aim to write two alternative trees: one erroneous and one correct. 
 a. Explain what's wrong in your erroneous tree and how you've corrected the error in the other tree. .
 b. Use commands such as "str" or "attribute" and comment about whether your erroneous and correct tree differ in tips, Nnodes, or edges. 
+The Phylogenetic tree with 6 tips and 5 internal nodes do not have any branch lengths because I have not told it what and how to seperate it. What I noticed about the erroneous tree is that R does not discriminate in the commands that you give it. Let's say that in my erroneous we placed the outgroup in the ingroup there is no way of R telling me that this is wrong given the construction of the phylogenic tree. 
+
+```{r}
+
+newick_str = "(Clubmosses, (Sequoia,(Ferns,(Ginko, (Daisy, Radish)))));"
+tr2_plants = read.tree(text=newick_str)
+plot(tr2_plants)
+
+tr2_plants
+str("tr2_plants")
+attributes(tr2_plants)
+names(tr2_plants) 
+
+#now I will be writting the erroneous tree where I will place the outgroup Clubmoses into the ingroup 
+newick_str1 = "(Daisy, (Sequoia,(Ferns,(Ginko, (Clubmosses, Radish)))));"
+tr3_plants = read.tree(text=newick_str1)
+plot(tr3_plants)
+
+tr3_plants
+str("tr3_plants")
+attributes(tr3_plants)
+names(tr3_plants)
+```
+
 
 ## Branching order and branching lengths
 
@@ -155,6 +202,7 @@ plot(tr_primate)
 ```
 
 What was added to the tree and the plot of the tree?
+The lenghts of the tree was added to the tree meaning that more information of nodes were added making the tree more insightful of relative time of diversion. 
 
 ```{r}
 newick_str = "(((Humans:6.0, Chimps:6.0)LCA_humans_chimps:1.0, Gorillas:7.0)LCA_w_gorillas:1.0, Orangs:8.0)LCA_w_orangs:1.0;"
@@ -248,6 +296,28 @@ layout(matrix(1, 1))
 ### MINI EXERCISE 4
 
 Practice a few of these data display techniques using the six-taxon phylogeny that includes cabbage, kale, corn and wheat, plus radish and sequoia.
+```{r}
+newick_str = "(Clubmosses,(Ferns,(Ginko,(Sequoia,(Daisy, Radish)))));"
+tr2_plants = read.tree(text=newick_str)
+plot(tr2_plants)
+
+plot(tr2_plants, type="phylogram")
+plot(tr2_plants, type="cladogram")
+plot(tr2_plants, type="fan")
+plot(tr2_plants, type="unrooted")
+plot(tr2_plants, type="radial")
+
+plot(tr2_plants, main = "normal")
+plot(ladderize(tr2_plants), main = "right-ladderized")
+plot(ladderize(tr2_plants, FALSE), main = "left-ladderized")
+
+plot(tr2_plants, main = "normal", type = "phylogram", direction = c("upwards"))
+plot(ladderize(tr2_plants), main = "right-ladderized", direction = c("upwards"))
+plot(ladderize(tr2_plants, FALSE), main = "left-ladderized", direction=c("upwards"))
+
+
+```
+
 
 ### SAVING FILES: important for reproducing trees later
 
@@ -259,7 +329,7 @@ This will store the new file in your working directory. You may want to then mak
 
 ```{r}
 newick_fn = "tr2_plants"
-write.tree(tr2_plants, file=tr2_plants)
+write.tree(tr2_plants, file=newick_fn)
 ```
 
 ```{r}
@@ -426,7 +496,7 @@ Here is another example of a tree with variable branch lengths.
 ```{r}
 spp1 <- c("Abies_nordmanniana", "Abies_bornmuelleriana", "Abies_cilicica", "Abies_cephalonica",
 "Abies_numidica", "Abies_pinsapo", "Abies_alba", "Ginkgo biloba", "Nymphaea lotus", "Illicium mexicanum", "Magnolia fraseri","Lindera pulcherrima")
-tree_phylomatic <- phylomatic(taxa = taxa, storedtree ="zanne2014", get = 'POST')
+tree_phylomatic <- phylomatic(taxa = spp1, storedtree ="zanne2014", get = 'POST')
 plot(tree_phylomatic, no.margin = TRUE)
 ```
 
@@ -533,10 +603,25 @@ write.tree(tree_phylomatic_EG2, file=newick_fn5)
 Do and write up notes about two things:
 
 1. Try generating these trees again, but change from cladogram to phylogram, or to another format for the tree. 
+```{r}
+
+tree_phylomatic_EG2 <- phylomatic(taxa = EG, storedtree ="zanne2014", get = 'POST')
+plot(tree_phylomatic_EG2, no.margin = TRUE, type="phylogram")
+newick_fn5 = "tree_phylomatic_EG2"
+write.tree(tree_phylomatic_EG2, file=newick_fn5)
+
+```
+
 
 2. Then, looking at all your output, what differs most noticably between the pair of trees, and how/why does this relate to the storedtree used to generate them? Try to explain what this means in your own words. 
+Most noticibly there is a shaper difference between both of the trees. This means that the same information is used in both pairs of trees. 
+
+
 
 3. Lastly, look at the output and you'll see that many taxa were excluded. Try looking them up in EOL or Wikipedia. Why was it difficult to include them? What does this say about the history of botany? Are there some things that were excluded that should not have been excluded.  
+
+
+
 
 
 # FINISHING UP - MICRO-EXERCISES AND A MACRO-EXERCISE
@@ -547,8 +632,67 @@ Next, you prepared lists for Portfolio 2. You can use these to finish up this wo
 
 Format the list so that you can enter it into the phyomatic commands above -- probably by cutting and pasting a list of taxa. You may need to insert quotation marks and/or commas. 
 I encourage you to try a diffrent way of doing this: prepare a file, save it as a *.txt file and then read it and use the file.
+```{r}
+#List One 
+EG2<-c("Abies balsamea","Acer rubrum","Panicum depauperatum", "Erigeron strigosus","Parthenocissus quinquefolia","Prunus serotina","Smilax rotundifolia","Viburnum prunifolium","Viola cucullata","Castanea dentata","Eurybia divaricata", "Quercus rubra","Rhus copallinum","Rubus allegheniensis","Viburnum acerifolium","Muhlenbergia schreberi","Boechera laevigata","Aralia nudicaulis","Arisaema triphyllum","Asclepias tuberosa","Aureolaria flava","Carex umbellata","Cuscuta gronovii","Desmodium nudiflorum","Erechtites hieraciifolius", "Fragaria virginiana","Galium circaezans","Galium triflorum","Gaylussacia baccata", "Geranium maculatum","Geum virginianum","Hamamelis virginiana","Juniperus virginiana","Kalmia latifolia","Lespedeza procumbens","Linum virginianum")
+EG2
+tree_phylomatic_EG2 <- phylomatic(taxa = EG2, get = 'POST')
+plot(tree_phylomatic_EG2, no.margin = TRUE, type="cladogram")
+newick_fn5 = "tree_phylomatic_EG2"
+write.tree(tree_phylomatic_EG2, file=newick_fn5) 
+
+#repeating to get tree from Zanne2014
+tree_phylomatic_EG3 <- phylomatic(taxa = EG2, storedtree ="zanne2014", get = 'POST')
+plot(tree_phylomatic_EG3, no.margin = TRUE, type="cladogram")
+newick_fn6 = "tree_phylomatic_EG2"
+write.tree(tree_phylomatic_EG3, file=newick_fn6) 
+
+plot(tree_phylomatic_EG3, type="phylogram")
+plot(tree_phylomatic_EG3, type="cladogram")
+plot(tree_phylomatic_EG3, type="fan")
+plot(tree_phylomatic_EG3, type="unrooted")
+plot(tree_phylomatic_EG3, type="radial")
+
+plot(tree_phylomatic_EG3, main = "normal")
+plot(ladderize(tree_phylomatic_EG3), main = "right-ladderized")
+plot(ladderize(tree_phylomatic_EG3, FALSE), main = "left-ladderized")
+
+```
+Abby: 
+List one comes from Porfolio 2 Plant O Matic data which comes from data of plants that used to be where I reside in Washington Heights.I think the hard part of this part of the assignment was understanding that 
+List two comes from Portforlio 2 Wilikia Map data which comes from the app that uses your location to come up with species around you. I think it is very cool that R can modify the list and use the online data from taxa to recollect and make a phylogenetic tree. 
+
+```{r}
+#List two 
+EG3<-c ( "Abies balsamea","Acalypha australis", "Acalypha burquezii","Acalypha rhomboidea","Acalypha virginica","Acer palmatum","Acer ginnala"," Acer negundo","Acer nigrum", "Acer pensylvanicum","Acer platanoides","Acer pseudoplatanus","Acer rubrum","Acer saccharinum","Acer saccharum","Acorus calamus", "Actaea alba","Actaea pachypoda"," Actaea rubra","Adiantum jordanii","Adiantum pedatum","Adlumia fungosa","Adonis annua","Adonis aestivalis" )
+
+EG3
+tree_phylomatic_EG3 <- phylomatic(taxa = EG3, get = 'POST')
+plot(tree_phylomatic_EG3, no.margin = TRUE, type="cladogram")
+newick_fn7 = "tree_phylomatic_EG3"
+write.tree(tree_phylomatic_EG3, file=newick_fn7) 
+
+#repeating to get tree from Zanne2014
+tree_phylomatic_EG4 <- phylomatic(taxa = EG3, storedtree ="zanne2014", get = 'POST')
+plot(tree_phylomatic_EG4, no.margin = TRUE, type="cladogram")
+newick_fn8 = "tree_phylomatic_EG3"
+write.tree(tree_phylomatic_EG4, file=newick_fn8) 
+
+plot(tree_phylomatic_EG4, type="phylogram")
+plot(tree_phylomatic_EG4, type="cladogram")
+plot(tree_phylomatic_EG4, type="fan")
+plot(tree_phylomatic_EG4, type="unrooted")
+plot(tree_phylomatic_EG4, type="radial")
+
+plot(tree_phylomatic_EG4, main = "normal")
+plot(ladderize(tree_phylomatic_EG4), main = "right-ladderized")
+plot(ladderize(tree_phylomatic_EG4, FALSE), main = "left-ladderized")
+
+```
+
 
 Your list/file can then be used to obtain a phylogenetic tree using the code learned above for Phylomatic. 
+
 
 Plot your tree in one or more formats (e.g., fan, phylogeny, cladogram). Save that in pdf format. 
 
@@ -561,4 +705,4 @@ Lastly, be sure to save your R Notebook with appropriate output and commentary.
 When your finished with this part of Portfolio 3, you can and should push the notebook and associated exported files back to the appropriate GitHub Repository for Digital Lab 3.  
 
 
-# It looks like you didn't work through the 3.1 mini-exercises (see line 544). If you would like to receive points for this portion of Portfolio 3, do the mini-exercises and push the modified assignment to GitHub.
+
