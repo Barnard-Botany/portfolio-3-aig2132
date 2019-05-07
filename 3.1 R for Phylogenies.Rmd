@@ -561,4 +561,4 @@ Lastly, be sure to save your R Notebook with appropriate output and commentary.
 When your finished with this part of Portfolio 3, you can and should push the notebook and associated exported files back to the appropriate GitHub Repository for Digital Lab 3.  
 
 
-
+# It looks like you didn't work through the 3.1 mini-exercises (see line 544). If you would like to receive points for this portion of Portfolio 3, do the mini-exercises and push the modified assignment to GitHub.
